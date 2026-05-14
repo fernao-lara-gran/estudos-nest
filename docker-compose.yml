@@ -1,0 +1,29 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    image: nest-estudos:local
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      PORT: ${PORT:-3000}
+      JWT_SECRET: ${JWT_SECRET:-nest-estudo-docker-secret}
+
+  api-dev:
+    profiles:
+      - dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    image: nest-estudos:dev
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      PORT: ${PORT:-3000}
+      JWT_SECRET: ${JWT_SECRET:-nest-estudo-docker-secret}
