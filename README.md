@@ -1,98 +1,132 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <a href="https://nestjs.com/" target="_blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# nest-estudo
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+API de demonstração em [NestJS](https://github.com/nestjs/nest): raiz pública, `POST /login` (JWT), rotas em `/users` protegidas por Bearer, validação com `class-validator` e documentação em **Swagger UI** (`/docs`).
 
-## Description
+## Requisitos
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- [Node.js](https://nodejs.org/) (versão compatível com o `package.json` do repositório)
+- [Docker](https://docs.docker.com/get-docker/) e Docker Compose (opcional, para subir a API em container)
+- [k6](https://k6.io/docs/) (opcional, só para benchmark de carga descrito abaixo)
 
-## Project setup
+## Instalação
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+## Executar o projeto
+
+Variáveis úteis (opcionais):
+
+| Variável     | Descrição                          | Padrão (código)        |
+| ------------ | ---------------------------------- | ---------------------- |
+| `PORT`       | Porta HTTP                         | `3000`                 |
+| `JWT_SECRET` | Segredo para assinatura do JWT     | valor só para desenvolvimento |
+
+### Desenvolvimento (watch)
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start:dev
 ```
 
-## Run tests
+### Produção local (build + Node)
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run build
+npm run start:prod
 ```
 
-## Deployment
+### Outros scripts
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+| Comando              | Descrição        |
+| -------------------- | ---------------- |
+| `npm run start`      | Início sem watch |
+| `npm run build`      | Compila para `dist/` |
+| `npm run lint`       | ESLint           |
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Com o servidor no ar, a API responde em `http://localhost:3000` (ou na porta definida em `PORT`). A documentação interativa fica em **`http://localhost:3000/docs`**.
+
+## Docker
+
+Na raiz do repositório:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Imagem de produção (build + node dist/main.js)
+docker compose up --build
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Modo desenvolvimento com hot reload e código montado do host (profile `dev`):
 
-## Resources
+```bash
+docker compose --profile dev up --build api-dev
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+Variáveis podem ser passadas ao Compose, por exemplo:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+JWT_SECRET='seu-segredo' PORT=3000 docker compose up --build
+```
 
-## Support
+## Testes
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+npm run test        # unitários
+npm run test:e2e    # e2e
+npm run test:cov    # cobertura
+```
 
-## Stay in touch
+## Benchmark de carga (k6)
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+O script [`benchmarks/k6/aluno-load-auth.js`](benchmarks/k6/aluno-load-auth.js) segue a mesma ideia do benchmark do repositório de estudos em Fastify ([`fastify-estudos` — `aluno-load-auth.js`](https://github.com/fernao-lara-gran/fastify-estudos/blob/master/benchmarks/k6/aluno-load-auth.js)): faz `POST` de login, guarda o JWT e dispara requisições autenticadas em `/`, `/users` e `/users/1`.
 
-## License
+### Documentação e instalação do k6
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- Documentação oficial: [k6.io/docs](https://k6.io/docs/)
+- Conceitos de cenários e thresholds: [Using k6 / Options](https://k6.io/docs/using-k6/k6-options/reference/)
+
+### Como rodar neste projeto
+
+1. Suba a API (`npm run start:dev`, `npm run start:prod` ou Docker).
+2. Na raiz do repositório:
+
+```bash
+npm run k6:load -- -e EMAIL=aluno@exemplo.com -e PASSWORD=segredo
+```
+
+O helper [`benchmarks/k6/run.sh`](benchmarks/k6/run.sh) grava métricas em JSON em `benchmarks/k6/results/<nome-do-repo>-<AAAA-MM-DD>.json` (se já existir arquivo no mesmo dia, acrescenta sufixo `-HHMMSS`). Pasta alternativa:
+
+```bash
+K6_RESULTS_DIR=out/k6-results npm run k6:load -- -e EMAIL=a@b.com -e PASSWORD=x
+```
+
+Variáveis extras do script (alinhadas ao Fastify de referência):
+
+| Variável        | Descrição |
+| --------------- | --------- |
+| `BASE_URL`      | Origem com barra final (ex.: `http://localhost:3000/`) |
+| `PORT`          | Se `BASE_URL` não for definida, monta `http://localhost:${PORT}/` |
+| `LOGIN_PATH`    | Caminho do POST de login (padrão `/login`) |
+| `EMAIL` / `PASSWORD` | Obrigatórios para o login (e-mail válido, senha não vazia) |
+| `LOGIN_JSON`    | Se `0`, login como `application/x-www-form-urlencoded` |
+| `EXTRA_HEADERS` | JSON opcional com headers adicionais |
+
+Execução direta com o binário `k6` (sem gravar JSON pelo `run.sh`):
+
+```bash
+k6 run -e EMAIL=test@example.com -e PASSWORD=secret benchmarks/k6/aluno-load-auth.js
+```
+
+Os arquivos `benchmarks/k6/results/*.json` estão no `.gitignore`.
+
+## Recursos NestJS
+
+- [Documentação NestJS](https://docs.nestjs.com)
+- [Discord NestJS](https://discord.gg/G7Qnnhy)
+
+## Licença
+
+Este repositório mantém a licença indicada no `package.json` do projeto. O framework Nest é [licenciado em MIT](https://github.com/nestjs/nest/blob/master/LICENSE).
