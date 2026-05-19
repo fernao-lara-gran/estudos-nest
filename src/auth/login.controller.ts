@@ -13,7 +13,7 @@ import { LoginDto } from './dto/login.dto';
 export class LoginController {
   constructor(private readonly auth: AuthService) {}
 
-  @Post('login/')
+  @Post('login')
   @HttpCode(200)
   @ApiBody({ type: LoginDto })
   @ApiOkResponse({
