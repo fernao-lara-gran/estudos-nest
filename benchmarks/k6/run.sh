@@ -24,5 +24,19 @@ else
   OUT="$CANDIDATE"
 fi
 
+if [[ -f "$ROOT/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$ROOT/.env"
+  set +a
+fi
+
+EMAIL="${EMAIL:-user@test.com}"
+PASSWORD="${PASSWORD:-secret}"
+
 echo "k6: saída JSON -> $OUT" >&2
-exec k6 run --out "json=$OUT" "$@" benchmarks/k6/aluno-load-auth.js
+echo "k6: login ${EMAIL} (override: -e EMAIL=... -e PASSWORD=...)" >&2
+exec k6 run --out "json=$OUT" \
+  -e "EMAIL=${EMAIL}" \
+  -e "PASSWORD=${PASSWORD}" \
+  "$@" benchmarks/k6/aluno-load-auth.js

@@ -1,4 +1,28 @@
 services:
+  mysql:
+    build:
+      context: .
+      dockerfile: docker/mysql/Dockerfile
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: nest_fastify
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-uroot', '-proot']
+      interval: 5s
+      timeout: 5s
+      retries: 18
+      start_period: 45s
+
+  dynamodb:
+    image: amazon/dynamodb-local:3.0.0
+    ports:
+      - '8000:8000'
+    command: ['-jar', 'DynamoDBLocal.jar', '-inMemory', '-sharedDb']
+
   api:
     build:
       context: .
@@ -6,10 +30,23 @@ services:
       target: production
     image: nest-estudos:local
     ports:
-      - "${PORT:-3000}:3000"
+      - '${PORT:-3000}:3000'
+    env_file:
+      - .env
     environment:
       PORT: ${PORT:-3000}
       JWT_SECRET: ${JWT_SECRET:-nest-estudo-docker-secret}
+      MYSQL_HOST: mysql
+      MYSQL_PORT: '3306'
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: nest_fastify
+      DYNAMODB_ENDPOINT: http://dynamodb:8000
+    depends_on:
+      mysql:
+        condition: service_healthy
+      dynamodb:
+        condition: service_started
 
   api-dev:
     profiles:
@@ -20,10 +57,26 @@ services:
       target: development
     image: nest-estudos:dev
     ports:
-      - "${PORT:-3000}:3000"
+      - '${PORT:-3000}:3000'
     volumes:
       - .:/app
       - /app/node_modules
+    env_file:
+      - .env
     environment:
       PORT: ${PORT:-3000}
       JWT_SECRET: ${JWT_SECRET:-nest-estudo-docker-secret}
+      MYSQL_HOST: mysql
+      MYSQL_PORT: '3306'
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: nest_fastify
+      DYNAMODB_ENDPOINT: http://dynamodb:8000
+    depends_on:
+      mysql:
+        condition: service_healthy
+      dynamodb:
+        condition: service_started
+
+volumes:
+  mysql_data:

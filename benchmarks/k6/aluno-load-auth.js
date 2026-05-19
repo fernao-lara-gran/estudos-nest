@@ -8,7 +8,7 @@
  * BASE_URL — base com barra final (default: http://localhost:3000/ — porta do Nest / docker-compose local)
  * PORT — se definida e BASE_URL omitida, usa http://localhost:${PORT}/
  * LOGIN_PATH — POST login relativo à BASE_URL (default: /login)
- * EMAIL, PASSWORD — corpo JSON do login (email válido, senha não vazia; ver LoginDto)
+ * EMAIL, PASSWORD — corpo JSON do login (default: user@test.com / secret; ver LoginDto)
  * LOGIN_JSON — se "0", envia login como application/x-www-form-urlencoded (default: JSON)
  * EXTRA_HEADERS — JSON opcional de headers extras
  *
@@ -25,8 +25,8 @@ const baseUrl = (
   (__ENV.PORT ? `http://localhost:${__ENV.PORT}/` : 'http://localhost:3000/')
 ).replace(/\/?$/, '/');
 const loginPath = __ENV.LOGIN_PATH || '/login';
-const email = __ENV.EMAIL;
-const password = __ENV.PASSWORD;
+const email = __ENV.EMAIL || 'user@test.com';
+const password = __ENV.PASSWORD || 'secret';
 const useJsonLogin = __ENV.LOGIN_JSON !== '0';
 
 function parseExtraHeaders() {
@@ -99,16 +99,7 @@ let loggedIn = false;
 /** @type {string | null} */
 let bearerToken = null;
 
-function ensureCredentials() {
-  if (!email || !password) {
-    throw new Error(
-      'Defina EMAIL e PASSWORD (ex.: k6 run -e EMAIL=a@b.com -e PASSWORD=secret benchmarks/k6/aluno-load-auth.js)',
-    );
-  }
-}
-
 function doLogin() {
-  ensureCredentials();
   const loginUrl = `${baseUrl.replace(/\/+$/, '')}${loginPath.startsWith('/') ? '' : '/'}${loginPath}`;
 
   if (useJsonLogin) {
